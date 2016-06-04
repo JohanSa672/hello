@@ -1,0 +1,57 @@
+<?php 
+/**
+ * This is a Nereus pagecontroller.
+ *
+ */
+// Include the essential config-file which also creates the $anax variable with its defaults.
+include(__DIR__.'/config.php'); 
+
+
+/**
+ * Create a link to the content, based on its type.
+ *
+ * @param object $content to link to.
+ * @return string with url to display content.
+ */
+function getUrlToContent($content) {
+  switch($content->type) {
+    case 'page': return "page.php?url={$content->url}"; break;
+    case 'post': return "blog.php?slug={$content->slug}"; break;
+    default: return null; break;
+  }
+}
+
+
+// Connect to a MySQL database using PHP PDO
+$db = new CDatabase($nereus['database']);
+$con= new CContent();
+
+//show category
+$catstr=$con->getcategorystring($db);
+
+
+//Get all content
+$items=$con->getItems($db);
+
+
+// Do it and store it all in variables in the Anax container.
+$nereus['title'] = "Visa allt innehåll";
+$nereus['debug'] = $db->Dump();
+
+$nereus['main'] = <<<EOD
+<h1>{$nereus['title']}</h1>
+
+<p>Här är en lista på allt innehåll i databasen.</p>
+
+<ul>
+{$items}
+</ul>
+
+<p class="bloggpost"><a href='blog.php'>Visa alla bloggposter.</a>$catstr</p>
+
+EOD;
+
+
+
+// Finally, leave it all to the rendering phase of Anax.
+include(NEREUS_THEME_PATH);

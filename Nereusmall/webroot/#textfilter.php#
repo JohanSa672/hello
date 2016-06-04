@@ -1,0 +1,61 @@
+<?php 
+/**
+ * This is a Nereus pagecontroller.
+ *
+ */
+// Include the essential config-file which also creates the $anax variable with its defaults.
+include(__DIR__.'/config.php');
+
+
+// Prepare the content
+$html = <<<EOD
+Detta är ett exempel på markdown
+=================================
+
+En länk till [Markdowns hemsida](http://daringfireball.net/projects/markdown/).
+
+EOD;
+
+$bbcodetest="[b]Detta är bold[/b][i] Italic text[/i]";
+$linktest="Detta är en länk till min sida http://www.salomonbeat.com . Här kommer en ny http://dbwebb.se";
+$newlinetest="Hej\n Jag heter johan\n och jag är 41 år.";
+$markdowntest="
+Header level 1 {#id1}
+====================
+
+Here comes a paragraph.
+
+* Unordered list
+* Unordered list again
+
+Header level 2 {#id2}
+---------------------
+
+Hera comes my paragraph.
+";
+$filtertest="
+Mitt namn är Johan
+==================
+Här är min \"hemsida\" http://www.salomonbeat.com
+Mer info finns att få på hemsidan.
+";
+
+$filtertest2="<p>Johan";
+$fil="markdown,purify,shortcode";
+// Filter the content
+$filter = new CTextFilter();
+$html = $filter->doFilter($html, "markdown");
+
+
+
+// Do it and store it all in variables in the Anax container.
+$nereus['title'] = "Kasta tärning";
+$nereus['main'] = $filter->doFilter($filtertest2, $fil);
+//$filter->nl2br($newlinetest);
+//$filter->makeClickable($linktest);
+//$filter->bbcode2html($bbcodetest);
+
+
+
+// Finally, leave it all to the rendering phase of Anax.
+include(NEREUS_THEME_PATH);
